@@ -1,0 +1,260 @@
+@import "tailwindcss";
+
+/* ORBIT — استایل سراسری */
+:root {
+  --orbit-bg: #070B14;
+  --orbit-bg-elevated: #0C1220;
+  --orbit-glass: rgba(18, 26, 44, 0.55);
+  --orbit-text: #E7ECF5;
+  --orbit-text-secondary: #A6B0C3;
+  --orbit-text-muted: #6B7690;
+  --orbit-border: rgba(255, 255, 255, 0.06);
+  --orbit-primary: #7C3AED;
+  --orbit-secondary: #06B6D4;
+  --orbit-glow: radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.35), transparent 70%);
+}
+
+:root[data-theme='light'] {
+  --orbit-bg: #F5F7FB;
+  --orbit-bg-elevated: #FFFFFF;
+  --orbit-glass: rgba(255, 255, 255, 0.75);
+  --orbit-text: #0A1020;
+  --orbit-text-secondary: #4A5568;
+  --orbit-text-muted: #8A94A6;
+  --orbit-border: rgba(10, 16, 32, 0.1);
+  --orbit-glow: radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.12), transparent 70%);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--orbit-bg);
+  color: var(--orbit-text);
+  direction: rtl;
+  line-height: 1.75;
+  min-height: 100vh;
+  font-family: var(--font-vazirmatn), 'Vazirmatn', system-ui, sans-serif;
+  background-image:
+    var(--orbit-glow),
+    radial-gradient(circle at 12% 100%, rgba(6, 182, 212, 0.16), transparent 55%);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(124, 58, 237, 0.35);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(124, 58, 237, 0.55);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  color: inherit;
+}
+
+.orbit-glass {
+  background: var(--orbit-glass);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid var(--orbit-border);
+}
+
+.orbit-hover-lift {
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 260ms ease, border-color 260ms ease;
+}
+.orbit-hover-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+  border-color: rgba(124, 58, 237, 0.28);
+}
+
+@keyframes orbit-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.orbit-fade-up {
+  animation: orbit-fade-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-hover-lift,
+  .orbit-fade-up {
+    animation: none;
+    transition: none;
+  }
+  .orbit-hover-lift:hover {
+    transform: none;
+  }
+}
+
+.orbit-skeleton {
+  background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 100%);
+  background-size: 200% 100%;
+  animation: orbit-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes orbit-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.line-clamp-1 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; }
+.line-clamp-2 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.line-clamp-4 { overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; }
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.35);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+/* Sidebar — کشوی ناوبری موبایل / ستون ثابت دسکتاپ */
+.orbit-sidebar {
+  z-index: 100;
+  overflow-y: auto;
+  background: var(--orbit-bg-elevated);
+  transition: transform 280ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.orbit-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  margin-bottom: 16px;
+}
+
+.orbit-sidebar-title {
+  color: var(--orbit-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.orbit-sidebar-close {
+  position: relative;
+  z-index: 110;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  color: var(--orbit-text);
+  background: var(--orbit-glass);
+  border: 1px solid var(--orbit-border);
+  border-radius: 10px;
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.orbit-sidebar-close:hover,
+.orbit-sidebar-close:focus-visible {
+  color: #fff;
+  background: var(--orbit-primary);
+  transform: scale(1.04);
+}
+
+.orbit-menu-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbit-sidebar-close,
+.orbit-menu-toggle,
+.orbit-sidebar-overlay {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes orbit-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+} /* موبایل/تبلت (<1024px): کشوی شناور از راست، بسته به‌صورت پیش‌فرض */
+@media (max-width: 1023px) {
+  .orbit-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: auto;
+    width: min(320px, 88vw);
+    border-inline-start: 1px solid var(--orbit-border);
+    box-shadow: -18px 0 48px rgba(0, 0, 0, 0.22);
+    transform: translateX(100%);
+  }
+  .orbit-sidebar.is-open {
+    transform: translateX(0);
+  }
+  .orbit-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    cursor: pointer;
+    animation: orbit-overlay-in 220ms ease both;
+  }
+}
+
+/* دسکتاپ (>=1024px): ستون ثابت (sticky) زیر هدر، همیشه باز */
+@media (min-width: 1024px) {
+  .orbit-sidebar {
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    width: 240px;
+    transform: none;
+    border-inline-end: 1px solid var(--orbit-border);
+    box-shadow: none;
+  }
+  .orbit-sidebar-overlay,
+  .orbit-sidebar-close,
+  .orbit-menu-toggle {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-sidebar,
+  .orbit-sidebar-overlay {
+    transition: none;
+    animation: none;
+  }
+}
