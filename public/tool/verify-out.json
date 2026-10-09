@@ -1,0 +1,58 @@
+﻿persianLeftovers self-test: []
+{
+  "1_login_en": {
+    "path": "/en/login",
+    "elapsedMs": 4350,
+    "loadEvents": 2,
+    "navigationEvents": 2,
+    "navigationUrls": [
+      "http://localhost:3000/en/login",
+      "http://localhost:3000/en/login"
+    ]
+  },
+  "1_login_en_html": {
+    "lang": "en",
+    "dir": "ltr"
+  },
+  "1_login_en_persian": [
+    "فارسی"
+  ],
+  "1_login_en_reloadsWhileIdle": 1,
+  "2_guard": {
+    "finalPath": "/en/login",
+    "navigations": [
+      "http://localhost:3000/en/settings",
+      "http://localhost:3000/en/login",
+      "http://localhost:3000/en/login"
+    ],
+    "navigationCount": 3,
+    "loadEvents": 4,
+    "stillChanging": false
+  },
+  "3_login_fa": {
+    "finalPath": "/en/login",
+    "elapsedMs": 4091,
+    "loadEvents": 2,
+    "navigationEvents": 2,
+    "navigationUrls": [
+      "http://localhost:3000/en/login",
+      "http://localhost:3000/en/login"
+    ],
+    "loadEventsAfterIdle": 1
+  },
+  "3_login_fa_persian_sample": [
+    "فارسی"
+  ],
+  "3_login_fa_reloadsWhileIdle": 1,
+  "4_guard_fa": {
+    "finalPath": "/fa/ورود",
+    "navigationCount": 3,
+    "navigations": [
+      "http://localhost:3000/fa/تنظیمات",
+      "http://localhost:3000/fa/ورود",
+      "http://localhost:3000/fa/ورود"
+    ]
+  },
+  "4_guard_fa_reloadsWhileIdle": 1,
+  "consoleErrors": []
+}
