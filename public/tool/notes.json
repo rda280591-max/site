@@ -1,0 +1,24 @@
+{
+  "analysis": {
+    "bug1_refresh_loop": {
+      "root_cause": "DashboardLayout's auth gate fired router.replace('/login') on EVERY render while isAuthenticated was false (no ref/once guard). Going 'back' to a guarded route re-ran it, and the auth callback bounced between /login and the dashboard, producing an endless reload loop.",
+      "fixes": [
+        "once-only redirect guard (useRef) in DashboardLayout",
+        "auth errors (network/timeout) no longer treated as 'not logged in' -> shows retry UI instead of redirecting back and forth",
+        "loading skeleton now also covers 'not hydrated yet' so the gate cannot fire before the session is known",
+        "auth callback now redirects to a locale-prefixed path (/en/login or /fa/login) so the proxy does not rewrite it again",
+        "locale switch uses router.replace with scroll:false (a soft transition), so switching language no longer triggers a full page reload"
+      ]
+    },
+    "bug2_persian_leftovers_on_english": {
+      "root_cause": "Category labels ('هوش مصنوعی', ...), tag/keyword data, and many UI strings were hardcoded Persian literals in TS/TSX and in core/config, so they stayed Persian in the English locale.",
+      "fixes": [
+        "NEWS_CATEGORIES now holds only id+color; labels come from messages/{locale}.json via the new useCategoryLabels hook",
+        "every remaining hardcoded UI string (dashboard, news, notes, analytics, settings, feed, quick note, search bar, sidebar, header, error boundary) moved into en.json/fa.json",
+        "mock/news sample content translated to English",
+        "removed fa-ir formatting defaults (BRAND.locale/direction) and the unused rtl-locked AuthLayout",
+        "en.json and fa.json verified at 105 matching keys each"
+      ]
+    }
+  }
+}

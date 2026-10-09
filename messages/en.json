@@ -1,0 +1,215 @@
+{
+  "meta": {
+    "title": "ORBIT — Technology Command Center",
+    "description": "Your personal command center in the technology orbit.",
+    "siteName": "ORBIT"
+  },
+  "brand": {
+    "name": "ORBIT",
+    "tagline": "Your personal command center in the technology orbit"
+  },
+  "login": {
+    "hero": {
+      "eyebrow": "Command Center",
+      "titleLine1": "Welcome to",
+      "titleLine2": "your orbit",
+      "subtitle": "{tagline}. Manage your news, insights and notes in one place — fast and secure.",
+      "feature1Title": "Smart news feed",
+      "feature1Desc": "Automatic technology news categorization",
+      "feature2Title": "Trend analytics",
+      "feature2Desc": "Charts and stats at a glance",
+      "feature3Title": "Quick notes",
+      "feature3Desc": "Available everywhere, always",
+      "copyright": "© {year} {brand} — All rights reserved."
+    },
+    "form": {
+      "heading": "Sign in to continue",
+      "googleButton": "Continue with Google",
+      "redirecting": "Redirecting…",
+      "divider": "Secure & fast",
+      "termsPrefix": "By signing in, you accept the",
+      "termsLink": "Terms",
+      "termsConjunction": "and",
+      "privacyLink": "Privacy Policy",
+      "termsSuffix": ".",
+      "footerQuestion": "Having trouble?",
+      "footerLink": "Back to home",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "showPassword": "Show",
+      "hidePassword": "Hide",
+      "passwordButton": "Sign in with email",
+      "signingIn": "Signing in…",
+      "passwordHint": "Admin access only — accounts are provisioned by the owner."
+    },
+    "errors": {
+      "cancelled": "Sign-in was cancelled.",
+      "generic": "Sign-in failed. Please try again.",
+      "oauth": "Could not start Google sign-in. Please try again.",
+      "signin_failed": "Sign-in failed. Please try again.",
+      "service_unavailable": "The service is temporarily unavailable. Please try again later.",
+      "invalid_credentials": "Email or password is incorrect.",
+      "rate_limited": "Too many attempts. Please wait a few minutes and try again.",
+      "invalid_body": "The request was invalid. Please try again."
+    }
+  },
+  "common": {
+    "loading": "Loading…",
+    "redirecting": "Redirecting…",
+    "language": "Language",
+    "switchLanguage": "Switch language",
+    "secure": "Secure",
+    "switchTheme": "Switch theme",
+    "retry": "Try again",
+    "goToLogin": "Go to sign-in",
+    "connectionErrorTitle": "Could not reach the server",
+    "connectionErrorBody": "We couldn't verify your session. Check your connection and try again.",
+    "search": "Search…",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "save": "Save",
+    "read": "Read",
+    "bookmark": "Bookmark",
+    "untitled": "Untitled",
+    "logout": "Sign out",
+    "switchToEnglish": "Switch to English",
+    "switchToPersian": "Switch to Persian",
+    "readMore": "Read more",
+    "readLess": "Show less"
+  },
+  "time": {
+    "now": "just now",
+    "future": "in the future",
+    "minuteAgo": "min ago",
+    "hourAgo": "hr ago",
+    "dayAgo": "days ago",
+    "monthAgo": "months ago",
+    "yearAgo": "years ago"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "news": "News feed",
+    "notes": "Notes",
+    "analytics": "Analytics",
+    "settings": "Settings"
+  },
+  "sidebar": {
+    "menu": "Menu",
+    "navigation": "Main navigation",
+    "closeMenu": "Close menu",
+    "commandCenter": "Command Center",
+    "version": "ORBIT v0.1",
+    "categories": "Categories",
+    "pinned": "Pinned",
+    "all": "All"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview",
+    "source": "Source: {provider}",
+    "statsTotal": "All stories",
+    "statsUnread": "Unread",
+    "statsBookmarked": "Bookmarked",
+    "trendTitle": "7-day trend",
+    "hotTags": "Hot tags",
+    "hotTagsSubtitle": "Most frequent keywords",
+    "latest": "Latest news"
+  },
+  "categories": {
+    "ai": "AI",
+    "gadgets": "Gadgets",
+    "software": "Software",
+    "hardware": "Hardware",
+    "security": "Security",
+    "space": "Space & science",
+    "startups": "Startups"
+  },
+  "chart": {
+    "distributionTitle": "Category breakdown",
+    "distributionSubtitle": "{count} stories"
+  },
+  "feed": {
+    "loading": "Loading latest news…",
+    "errorTitle": "Could not load the news",
+    "retry": "Try again",
+    "empty": "No stories found.",
+    "loadMore": "Load more"
+  },
+  "news": {
+    "title": "News feed",
+    "subtitle": "The latest stories across every category",
+    "searchPlaceholder": "Search news…"
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "Your thoughts and quick reminders",
+    "new": "New note",
+    "empty": "No notes yet",
+    "quickTitle": "Quick note",
+    "titlePlaceholder": "Title (optional)",
+    "bodyPlaceholder": "Write something…"
+  },
+  "analytics": {
+    "title": "Analytics",
+    "subtitle": "A deeper look at trends and content distribution",
+    "trendTitle": "7-day trend",
+    "compareTitle": "Category comparison"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "retry": "Try again"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "themeDark": "🌙 Dark",
+    "themeLight": "☀️ Light",
+    "themeSystem": "💻 System",
+    "about": "About",
+    "aboutText": "ORBIT — your personal command center in the technology orbit",
+    "version": "Version 0.1"
+  },
+  "metaPages": {
+    "news": {
+      "title": "Technology News Feed",
+      "description": "Latest technology news, trends and breaking stories from around the world, updated in real time."
+    },
+    "analytics": {
+      "title": "Tech Analytics Dashboard",
+      "description": "Visual analytics of technology trends: categories, charts and 7-day activity insights."
+    },
+    "notes": {
+      "title": "Personal Notes",
+      "description": "Capture, pin and manage your personal notes inside the ORBIT command center."
+    },
+    "settings": {
+      "title": "Account Settings",
+      "description": "Manage your ORBIT account: theme, notifications, privacy and language preferences."
+    },
+    "login": {
+      "title": "Sign In",
+      "description": "Sign in to your ORBIT account with Google to sync your dashboard."
+    },
+    "home": {
+      "title": "ORBIT — Technology Command Center",
+      "description": "Your personal command center in the technology orbit: live news, analytics and notes in one dashboard."
+    },
+    "home.title": "ORBIT — Latest Technology News Dashboard",
+    "home.description": "Track the latest AI, security, space and startup headlines from BBC, The Guardian, Ars Technica, The Verge, TechCrunch, Wired and NASA — refreshed every few minutes on one clean dashboard.",
+    "news.title": "Technology News Feed — AI, Security & Space Headlines | ORBIT",
+    "news.description": "A live technology news feed aggregating top headlines from leading tech publishers. Search by keyword, filter by category and open any story in-app."
+  },
+  "article": {
+    "back": "Back to news",
+    "readOnSite": "Read full article on source",
+    "source": "Source",
+    "published": "Published",
+    "notFoundTitle": "This article is no longer available",
+    "notFoundBody": "The news may have been removed from the feed. Go back and pick another story.",
+    "loading": "Loading article…",
+    "bookmark": "Bookmark",
+    "bookmarked": "Bookmarked",
+    "deepDive": "Deep dive",
+    "exit": "Exit"
+  }
+}
