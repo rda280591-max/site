@@ -327,3 +327,103 @@
 .admin-shell[data-theme='light'] .admin-mbar { background: rgba(248, 250, 254, 0.95); border-top-color: rgba(15,23,42,.08); }
 .admin-shell[data-theme='light'] .admin-mbar-item { color: #475569; }
 .admin-shell[data-theme='light'] .admin-mbar-item[data-active='true'] { color: #0e7490; }
+
+/* ═════════════════════════════════════════════════════════─────────────────
+   موبایل — نوار بالای چسبان + دکمه همبرگری (AdminTopBar)
+   FIX (بازخورد کاربر): استایل‌های این بار قبلاً هیچ‌جا تعریف نشده بود؛
+   هدر بدون سایه/فونت درست رندر می‌شد و آیکون سه‌خطی اصلاً دیده نمی‌شد
+   (اسپن‌ها عرض/ارتفاع نداشتند). اینجا کامل شد: morph GPU سه‌خط→X،
+   backdrop سبز-کهربایی برای هر دو تم، و typography پایدار.
+   ════════════════════════════════════════════════════════════════════════ */
+.admin-mtop {
+  /* پالت از توکن‌های پنل (--orbit-*) read می‌شود تا با تم sync بماند */
+  background: color-mix(in srgb, #0B0E17 92%, transparent);
+  box-shadow: 0 1px 0 rgba(34, 211, 238, 0.12), 0 8px 24px -16px rgba(0, 0, 0, 0.8);
+  font-feature-settings: 'ss01' on; /* Vazirmatn: شکل جایگزین ارقام لاتین */
+}
+@supports not (background: color-mix(in srgb, red 50%, blue)) {
+  .admin-mtop { background: rgba(11, 14, 23, 0.92); } /* fallback مرورگر قدیمی */
+}
+
+/* آیکون همبرگری: سه خط واقعی با morph به X — فقط transform/opacity (GPU) */
+.admin-hamb-l {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform .2s cubic-bezier(.22,.61,.36,1), opacity .15s ease;
+}
+.admin-hamb-l1 { top: 0; }
+.admin-hamb-l2 { top: 8px; }
+.admin-hamb-l3 { top: 16px; }
+.admin-hamb-l.is-x { transform-origin: center; }
+.admin-hamb-l1.is-x { transform: translateY(8px) rotate(45deg); }
+.admin-hamb-l2.is-x { opacity: 0; transform: scaleX(.2); }
+.admin-hamb-l3.is-x { transform: translateY(-8px) rotate(-45deg); }
+@media (prefers-reduced-motion: reduce) {
+  .admin-hamb-l { transition: none; }
+}
+
+/* فیدبک لمس آنی روی دکمه‌های بار بالا و شیت */
+.admin-mtop button:active,
+.admin-sheet-item:active { transform: scale(.97); }
+.admin-mtop button, .admin-sheet-item { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+
+/* آیتم شیت: ورود پله‌ای (stagger) خیلی کوتاه — حس عمق بدون تأخیر در ناوبری */
+@keyframes admin-sheet-item-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.admin-sheet-item { animation: admin-sheet-item-in .18s cubic-bezier(.22,.61,.36,1) both; }
+.admin-sheet-item:nth-child(1) { animation-delay: .02s; }
+.admin-sheet-item:nth-child(2) { animation-delay: .045s; }
+.admin-sheet-item:nth-child(3) { animation-delay: .07s; }
+.admin-sheet-item:nth-child(4) { animation-delay: .095s; }
+.admin-sheet-item:nth-child(5) { animation-delay: .12s; }
+.admin-sheet-item:nth-child(6) { animation-delay: .145s; }
+[dir='rtl'] .admin-sheet-item > svg:last-child { transform: scaleX(-1); } /* فلش ← در فارسی */
+@media (prefers-reduced-motion: reduce) {
+  .admin-sheet-item { animation: none; }
+}
+
+/* ── تایپوگرافی موبایل پنل: خوانایی واقعی (گزارش: «فونت‌ها ریز/به‌هم‌ریخته»)
+   قانون Apple HIG/MD: حداقل ۱۲–۱۳px برای متن ثانویه. کلاس‌های arbitrary
+   text-[10px]/text-[11px] که در کامپوننت‌ها استفاده شده، زیر md بزرگ‌تر
+   می‌شوند؛ لاین‌هاییت فارسی (Vazirmatn نیاز به فضای عمودی بیشتر دارد) هم
+   تنظیم می‌شود — specificity دو کلاسه، بدون تغییر JSX صفحات. */
+@media (max-width: 767px) {
+  .admin-shell { line-height: 1.85; } /* فاصله خطوط متناسب با فونت فارسی */
+  .admin-shell [class*='text-[10px]'] { font-size: 12px; }
+  .admin-shell [class*='text-[11px]'] { font-size: 13px; }
+  /* اعداد متریک روی موبایل tabular بمانند تا پرش عرض نداشته باشند */
+  .admin-count, .admin-shell [class*='tabular'] { font-variant-numeric: tabular-nums; }
+  /* عنوان صفحات: مقیاس کوچک‌تر ولی نه ناخوانا */
+  .admin-shell h1 { letter-spacing: -0.01em; }
+}
+
+/* ── حالت روشن: بار بالا + همبرگری + شیت ─────────────────────────────── */
+.admin-shell[data-theme='light'] .admin-mtop {
+  background: color-mix(in srgb, #f8fafd 92%, transparent);
+  border-bottom-color: rgba(15, 23, 42, 0.08);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.06), 0 8px 20px -16px rgba(15, 23, 42, 0.25);
+}
+.admin-shell[data-theme='light'] .admin-mtop button:not([aria-expanded]) ,
+.admin-shell[data-theme='light'] .admin-mtop .border-white\/10 {
+  border-color: rgba(15, 23, 42, 0.12);
+  background: rgba(15, 23, 42, 0.04);
+  color: #334155;
+}
+.admin-shell[data-theme='light'] .admin-hamb-l { background: #334155; }
+.admin-shell[data-theme='light'] .admin-sheet {
+  background: rgba(250, 251, 254, 0.97);
+  border-top-color: rgba(6, 182, 212, 0.25);
+  box-shadow: 0 -16px 44px -14px rgba(15, 23, 42, 0.3);
+}
+.admin-shell[data-theme='light'] .admin-sheet-item { color: #1e293b; background: rgba(15, 23, 42, 0.04); }
+.admin-shell[data-theme='light'] .admin-sheet-item[data-active='true'] { color: #0e7490; background: rgba(6, 182, 212, 0.1); }
+.admin-shell[data-theme='light'] .admin-sheet h2 { color: #0e7490; }
+
+/* کانتینر آیکون همبرگری: relative تا خطوط absolute درست قرار گیرند */
+.admin-hamb { position: relative; }

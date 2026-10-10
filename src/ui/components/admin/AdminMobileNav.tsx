@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import Icon, { type IconName } from '@/ui/components/atoms/Icon';
 import { lazyAuth } from '@/services/auth/lazySupabase';
 import AdminLocaleToggle from './AdminLocaleToggle';
+import AdminTopBar from './AdminTopBar';
 import type { AppLocale } from '@/i18n/routing';
 
 type NavKey = 'dashboard' | 'news' | 'feeds' | 'audit' | 'users' | 'settings';
@@ -102,6 +103,17 @@ export default function AdminMobileNav({ email, locale }: { email: string | null
 
   return (
     <>
+      {/* ── نوار بالای موبایل: برند + سوییچ زبان + دکمه همبرگری ─────────── */}
+      <AdminTopBar
+        email={email}
+        locale={locale}
+        menuOpen={open}
+        onToggleMenu={() => {
+          setOpenState(!open);
+          if (!open) warmPrefetch();
+        }}
+      />
+
       {/* ── نوار پایین موبایل ─────────────────────────────────────────── */}
       <nav
         className="admin-mbar fixed inset-x-0 bottom-0 z-40 flex items-stretch border-t border-white/10 bg-[#0B0E17]/95 backdrop-blur-md md:hidden"
@@ -117,10 +129,10 @@ export default function AdminMobileNav({ email, locale }: { email: string | null
               href={l.href}
               data-active={active}
               onTouchStart={() => { if (!active) warmPrefetch(); }}
-              className={`admin-mbar-item flex min-h-[48px] flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold ${active ? 'text-cyan-300' : 'text-slate-400'}`}
+              className={`admin-mbar-item flex min-h-[52px] flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold ${active ? 'text-cyan-300' : 'text-slate-400'}`}
               aria-current={active ? 'page' : undefined}
             >
-              <Icon name={l.icon} size={18} />
+              <Icon name={l.icon} size={19} />
               {tp(l.key)}
             </Link>
           );
@@ -128,12 +140,12 @@ export default function AdminMobileNav({ email, locale }: { email: string | null
         <button
           type="button"
           onClick={() => { setOpenState(true); warmPrefetch(); }}
-          className="admin-mbar-item flex min-h-[48px] flex-1 flex-col items-center justify-center gap-0.5 text-[10px] font-semibold text-slate-400"
+          className={`admin-mbar-item flex min-h-[52px] flex-1 flex-col items-center justify-center gap-1 text-[11px] font-semibold ${open ? 'text-cyan-300' : 'text-slate-400'}`}
           aria-expanded={open}
           aria-controls="admin-mobile-menu"
           data-testid="admin-mobile-more"
         >
-          <Icon name="menu" size={18} />
+          <Icon name="menu" size={19} />
           {t('more')}
         </button>
       </nav>
@@ -152,23 +164,23 @@ export default function AdminMobileNav({ email, locale }: { email: string | null
             aria-modal="true"
             aria-label={t('navLabel')}
             onClick={(e) => e.stopPropagation()}
-            className="admin-sheet absolute inset-x-0 bottom-0 rounded-t-2xl border-t border-cyan-400/20 bg-[#0d1424] p-4"
+            className="admin-sheet fixed inset-x-0 bottom-0 top-auto max-h-[78dvh] overflow-y-auto rounded-t-2xl border-t border-cyan-400/20 bg-[#0d1424]/95 p-4 shadow-[0_-16px_50px_-12px_rgba(34,211,238,0.25)] backdrop-blur-xl"
             style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)' }}
           >
-            {/* هندل بصری + دکمه بستن (ضخیم برای لمس) */}
+            {/* هندل بصری — نشانه «کشویی بودن» منو */}
             <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-white/15" aria-hidden />
-            <button
-              type="button"
-              onClick={() => setOpenState(false)}
-              className="absolute top-3 flex h-11 w-11 items-center justify-center rounded-full text-slate-400 active:bg-white/10"
-              style={{ insetInlineEnd: '0.75rem' }}
-              aria-label={t('closeMenu')}
-              data-testid="admin-mobile-close"
-            >
-              <Icon name="close" size={18} />
-            </button>
 
-            <div className="grid grid-cols-2 gap-2">
+            {/* هدر شیت: عنوان + ایمیل ادمین (جایگزین دکمه × — همبرگریِ بالا همین کار را می‌کند) */}
+            <div className="mb-3 flex items-baseline justify-between gap-3">
+              <h2 className="text-sm font-bold text-cyan-100">{t('navLabel')}</h2>
+              {email && (
+                <p dir="ltr" className="min-w-0 truncate text-[11px] text-slate-500">{email}</p>
+              )}
+            </div>
+
+            {/* گرید لیستی تک‌ستونه: خواناتر از گرید ۲تایی روی موبایل فارسی
+                (نام‌های بلند مثل «مدیریت اخبار» قبلاً می‌شکست/ellipsis می‌شد) */}
+            <div className="flex flex-col gap-1.5">
               {LINKS.map((l, i) => {
                 const active = isActive(l.href);
                 return (
@@ -178,31 +190,31 @@ export default function AdminMobileNav({ email, locale }: { email: string | null
                     ref={i === 0 ? firstItemRef : undefined}
                     data-active={active}
                     aria-current={active ? 'page' : undefined}
-                    className={`admin-mbar-item flex min-h-[52px] items-center gap-2.5 rounded-xl px-3 text-sm font-semibold ${active ? 'bg-cyan-500/15 text-cyan-200' : 'bg-white/[0.04] text-slate-300'}`}
+                    className={`admin-sheet-item flex min-h-[54px] items-center gap-3 rounded-xl px-3.5 text-[15px] font-semibold ${active ? 'bg-cyan-500/15 text-cyan-200' : 'bg-white/[0.04] text-slate-200'}`}
                   >
-                    <Icon name={l.icon} size={17} className={active ? 'text-cyan-300' : 'text-slate-500'} />
-                    {tp(l.key)}
+                    <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-lg ${active ? 'bg-cyan-500/20 text-cyan-300' : 'bg-white/[0.06] text-slate-400'}`}>
+                      <Icon name={l.icon} size={18} />
+                    </span>
+                    <span className="min-w-0 flex-1 truncate">{tp(l.key)}</span>
+                    <Icon name="chevron-left" size={15} className={active ? 'text-cyan-400/70' : 'text-slate-600'} />
                   </Link>
                 );
               })}
             </div>
 
-            <div className="mt-4 flex items-center gap-2">
+            {/* ردیف اکشن‌ها: سوییچ زبان + خروج سریع (لمسی ≥48px، متن ۱۴px+) */}
+            <div className="mt-4 grid grid-cols-2 gap-2">
               <AdminLocaleToggle locale={locale} />
               <button
                 type="button"
                 onClick={quickExit}
                 data-testid="admin-quick-exit-mobile"
-                className="flex min-h-[44px] flex-1 items-center justify-center gap-2 rounded-lg border border-fuchsia-500/40 px-3 text-sm text-fuchsia-300 active:scale-[0.98]"
+                className="flex min-h-[48px] items-center justify-center gap-2 rounded-lg border border-fuchsia-500/40 bg-fuchsia-500/[0.06] px-3 text-sm font-semibold text-fuchsia-300 active:scale-[0.98]"
               >
-                <Icon name="logout" size={15} />
+                <Icon name="logout" size={16} />
                 {t('quickExit')}
               </button>
             </div>
-
-            {email && (
-              <p dir="ltr" className="mt-3 truncate text-center text-[11px] text-slate-500">{email}</p>
-            )}
           </div>
         </div>
       )}

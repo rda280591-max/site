@@ -85,7 +85,10 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <AdminMobileNav email={email} locale={locale} />
           {/* max-width + m-auto: محتوا روی مانیتور عریض به‌جای کشیدگی بی‌هدف،
               ستون خوانا با همان ریتم سایدبار می‌گیرد — عادت واقعی طراحها. */}
-          <main id="admin-main" className="admin-main-scroll min-w-0 flex-1 p-5 pb-24 sm:p-7 sm:pb-9 lg:p-9">
+          {/* FIX (منو همبرگری): ارتفاع نوار بالا h-14 + safe-area است؛ padding
+              محتوا باید دقیقاً همان‌قدر باشد وگرنه اولین کارت زیر هدر چسبان
+              پنهان می‌ماند. پایین = نوار تب‌ها (min-h 52px) + safe-area. */}
+          <main id="admin-main" className="admin-main-scroll min-w-0 flex-1 p-4 pt-[calc(3.5rem+env(safe-area-inset-top)+0.75rem)] pb-[calc(3.5rem+env(safe-area-inset-bottom)+0.75rem)] sm:p-7 sm:pt-[calc(3.5rem+1.75rem)] sm:pb-9 lg:p-9">
             <div className="mx-auto w-full max-w-6xl">{children}</div>
           </main>
         </div>
