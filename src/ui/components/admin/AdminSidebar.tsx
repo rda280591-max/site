@@ -19,10 +19,39 @@ const LINKS: ReadonlyArray<{ href: string; key: NavKey; testid: string; icon: Ic
   { href: '/admin/settings', key: 'settings', testid: 'admin-nav-settings', icon: 'settings' },
 ] as const;
 
+/**
+ * PERF — پیش‌fetch هوشمند مسیرهای ادمین.
+ * صفحات پنل force-dynamic هستند؛ بدون prefetch، هر سوییچ تب = رندر کامل سمت
+ * سرور (گارد + کوئری‌ها) که روی موبایل چند صد میلی‌ثانیه تاخیر محسوس می‌سازد.
+ * با router.prefetch به مسیر مجاور، RSC payload در پس‌زمینه آماده می‌شود و
+ * کلیک کاربر تقریباً آنی رندر می‌گردد. زمان‌بندی requestIdleCallback تا
+ * prefetch وسط تایپ/اسکرول کاربر، CPU و شبکه را اشباع نکند؛ fallback به
+ * setTimeout(۳s) برای مرورگرهای بدون پشتیبانی (iOS Safari قدیمی).
+ */
+function useAdminPrefetch(): (href: string) => void {
+  const router = useRouter();
+  return (href: string) => {
+    const go = () => {
+      try {
+        router.prefetch(href);
+      } catch {
+        /* prefetch بهترین‌تلاش است؛ شکست نباید UI را بشکند */
+      }
+    };
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      (window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void })
+        .requestIdleCallback?.(go, { timeout: 2000 });
+    } else {
+      setTimeout(go, 3000);
+    }
+  };
+}
+
 /** سایدبار ادمین — با آیکون، نشانگر گرادیانی آیتم فعال و لبه نورانی متحرک. */
 export default function AdminSidebar({ email, locale }: { email: string | null; locale: AppLocale }) {
   const pathname = usePathname();
   const router = useRouter();
+  const prefetch = useAdminPrefetch();
   // FIX (دوزبانه‌سازی): همه برچسب‌ها از namespace admin در messages/admin.json
   const tp = useTranslations('admin.pages');
   const t = useTranslations('admin');
@@ -58,6 +87,9 @@ export default function AdminSidebar({ email, locale }: { email: string | null; 
           return (
             <Link key={l.href} href={l.href} data-testid={l.testid} aria-current={active ? 'page' : undefined}
               data-active={active}
+              onMouseEnter={() => !active && prefetch(l.href)}
+              onTouchStart={() => !active && prefetch(l.href)}
+              onFocus={() => !active && prefetch(l.href)}
               className={`admin-nav-item flex items-center gap-2.5 px-3 py-2 text-sm ${active ? '' : 'text-slate-300 hover:bg-white/5 hover:text-slate-100'}`}>
               <Icon name={l.icon} size={16} className={active ? 'text-cyan-300' : 'text-slate-500'} />
               {tp(l.key)}

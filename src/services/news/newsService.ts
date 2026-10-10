@@ -118,6 +118,14 @@ export async function fetchNews(query: NewsQuery = {}): Promise<Result<NewsRespo
   let raw = await NewsApiProvider.fetch(query);
   let provider: NewsResponse['provider'] = 'newsapi';
 
+  // FIX — Agentic Browsing / «داده‌ای موجود نیست» (۲/۳): آخرین fallback کل
+  // فید، Mock بود؛ در production یعنی داده جعلی با عکس‌های picsum و
+  // example.com به کاربر و ایجنت‌های AI سرو می‌شد. حالا mock فقط وقتی فعال
+  // است که صریحاً درخواست شده (NEXT_PUBLIC_NEWS_MOCK=1 — توسعه آفلاین).
+  // در غیر این صورت خطا صادقانه به UI می‌رسد و پنل «خطا + تلاش دوباره»
+  // (به‌جای نمایش داده ساختگی) نشان داده می‌شود.
+  const mockEnabled = process.env.NEXT_PUBLIC_NEWS_MOCK === '1';
+
   if (!raw.ok) {
     log.warn('NewsAPI ناموفق؛ تلاش با همه فیدهای RSS.');
     // FIX: previously only one feed (Ars Technica) was read; now all three feeds
@@ -126,14 +134,42 @@ export async function fetchNews(query: NewsQuery = {}): Promise<Result<NewsRespo
     if (rss.ok) {
       raw = Ok({ articles: rss.value, total: rss.value.length });
       provider = 'rss';
+    } else if (mockEnabled) {
+      log.warn('RSS نیز ناموفق؛ استفاده از Mock (فقط با NEXT_PUBLIC_NEWS_MOCK=1).');
+      const mock = await MockProvider.fetch(query);
+      raw = Ok(mock);
+      provider = 'mock';
+    } else {
+      // هر دو منبع واقعی ناموفق → اگر نسخه stale در کش هست همان را بده،
+      // وگرنه Err تا UI پیام خطای واقعی (و نه داده جعلی) نشان دهد.
+      const stale = cacheService.getStale<NewsResponse>(key);
+      if (stale && (stale.articles?.length ?? 0) > 0) {
+        return Ok({ ...stale, fromCache: true });
+      }
+      // FIX — موبایل/ایجنتیک براوزینگ: مجموعه پایه نرمال‌شده هنوز در کش هست
+      // ولی پاسخ query منقضی شده بود؛ از همان مجموعه برش بده (به‌جای خطا).
+      const staleBase =
+        cacheService.get<Article[]>('news:norm:base') ??
+        cacheService.getStale<Article[]>('news:norm:base');
+      if (staleBase && staleBase.length > 0) {
+        provider = 'rss';
+        // برش دسته از مجموعه پایه کهنه — منطق یکسان با sliceCategory پایین.
+        const sliced =
+          query.category === undefined || query.category === 'all'
+            ? staleBase
+            : staleBase.filter((a) => a.category === requestedCategory);
+        const searched = query.search
+          ? sliced.filter((a) => matchesSearch(a, query.search!))
+          : sliced;
+        return Ok({
+          articles: paginateArticles(searched, query),
+          total: searched.length,
+          fromCache: true,
+          provider,
+        });
+      }
+      return raw;
     }
-  }
-
-  if (!raw.ok) {
-    log.warn('RSS نیز ناموفق؛ استفاده از Mock.');
-    const mock = await MockProvider.fetch(query);
-    raw = Ok(mock);
-    provider = 'mock';
   }
 
   // FIX — Performance: قبلاً کل خروجی (ده‌ها تا ~100 مقاله، هرکدام با sanitize

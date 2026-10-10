@@ -127,8 +127,69 @@ async function fetchOneFeed(feedUrl: string): Promise<RssItem[]> {
 /** Merge all feeds, sort by freshness and slice to one page size. */
 export async function getPrefetchedNewsItems(): Promise<RssItem[]> {
   try {
+    // FIX — Agentic Browsing / «داده‌ای موجود نیست»: ایجنت‌های AI (و هر کلاینت
+    // بدون JavaScript) HTML اولیه را می‌خوانند؛ اگر seed خالی باشد آن‌ها صفحه
+    // را «بدون داده» گزارش می‌کنند حتی وقتی کاربر واقعی با hydrate محتوا را
+    // می‌بیند. cold-fetch قبلاً تا ۸ ثانیه timeout داشت و روی serverless
+    // (cold-start + egress کند) اغلب صفر برمی‌گشت. حالا سقف زمان کل prefetch
+    // از TTL کش (۳۰۰s) بسیار کوتاه‌تر است؛ timeout → lastGood یا [] (کلاینت
+    // retry می‌کند) ولی رندر سرور هرگز بیش از حد بلوکه نمی‌شود.
+    const items = await Promise.race([
+      collectPrefetchedItems(),
+      new Promise<RssItem[] | 'timeout'>((resolve) =>
+        setTimeout(() => resolve('timeout'), PREFETCH_DEADLINE_MS),
+      ),
+    ]);
+    if (items !== 'timeout') {
+      // FIX — موبایل/ایجنتیک براوزینگ: آیتم‌های معتبر را در lastGood نگه می‌داریم
+      // تا حتی اگر درخواست بعدی (generateMetadata/body) deadline بخورد، seed از
+      // داده سالم قبلی ساخته شود. قبلاً این کار فقط در WithFallback انجام می‌شد
+      // و مسیر timeout هیچ lastGood نمی‌ساخت → «داده‌ای موجود نیست» روی شبکه
+      // کند موبایل.
+      if (items.length > 0) rememberGoodItems(items);
+      return items;
+    }
+    logPrefetchTimeout();
+    return [];
+  } catch {
+    return [];
+  }
+}
+
+/** lastGood را از بیرون قابل‌استفاده کن (توسط WithFallback و مسیر timeout). */
+function rememberGoodItems(items: RssItem[]): void {
+  lastGoodItems = { items, at: Date.now() };
+}
+
+const PREFETCH_DEADLINE_MS = 3500;
+const PER_FEED_DEADLINE_MS = 2500;
+
+/** برنده شدن در race با deadline — مقدار fallback هنگام تأخیر برگردانده می‌شود. */
+async function withDeadline<T>(p: Promise<T>, ms: number, fallback: T): Promise<T> {
+  return Promise.race([
+    p,
+    new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms)),
+  ]);
+}
+let warnedOnce = false;
+function logPrefetchTimeout(): void {
+  if (!warnedOnce) {
+    warnedOnce = true;
+    console.warn('[feeds.server] prefetch deadline exceeded — serving without seed (client will fetch)');
+  }
+}
+
+async function collectPrefetchedItems(): Promise<RssItem[]> {
+  try {
     const feeds = await getActiveFeeds();
-    const settled = await Promise.all(feeds.map((f) => fetchOneFeed(f)));
+    // FIX (موبایل) — سقف زمان هر فید: قبلاً timeout داخلی feedCore برای یک
+    // درخواست کامل RSS ۸ ثانیه بود؛ روی شبکه کند/cold-start، Promise.race با
+    // deadline ۳.۵s همیشه می‌باخت و seed خالی سرو می‌شد («داده‌ای موجود
+    // نیست» در ایجنتیک براوزینگ موبایل). حالا هر فید حداکثر ۲.۵s فرصت دارد؛
+    // فیدهای سالم زودتر برمی‌گردند و فقط فید کند drop می‌شود.
+    const settled = await Promise.all(
+      feeds.map((f) => withDeadline(fetchOneFeed(f), PER_FEED_DEADLINE_MS, [] as RssItem[])),
+    );
     const merged = settled.flat();
 
     // FIX — «انتشار بی‌اثر» در پنل ادمین: مقالات دستی منتشرشده (ستون

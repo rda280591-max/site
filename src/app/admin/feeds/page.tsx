@@ -13,9 +13,13 @@ export const dynamic = 'force-dynamic';
  * نمایش داده می‌شود تا صفحه هرگز خالی/شکسته نباشد.
  */
 export default async function AdminFeedsPage() {
-  const { supabase } = await requireAdmin();
-  // FIX (باگ «عنوان انگلیسی، بقیه فارسی»): ترجمه با locale صریح — helper مشترک پنل.
-  const tf = await adminPageTranslations('admin.feeds');
+  // PERF — موازی‌سازی: ترجمه (این‌موری/کش) در کنار requireAdmin اجرا می‌شود؛
+  // قبلاً سریال بود و هر سوییچ تب چند صد ms اضافه می‌برد.
+  const [{ supabase }, tf] = await Promise.all([
+    requireAdmin(),
+    // FIX (باگ «عنوان انگلیسی، بقیه فارسی»): ترجمه با locale صریح — helper مشترک پنل.
+    adminPageTranslations('admin.feeds'),
+  ]);
   let rows = await fetchFeedSources(supabase, true);
   if (rows.length === 0) {
     // fallback خواندنی: پیش‌فرض‌های کد (بدون id → بدون دکمه toggle)

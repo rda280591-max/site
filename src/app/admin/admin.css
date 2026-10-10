@@ -228,6 +228,23 @@
   .admin-typewriter { max-width: 100%; border-inline-end: none; }
 }
 
+/* ── PERF — حذف تأخیرهای تزئینی در سوییچ تب (گزارش موبایل) ─────────────
+   انیمیشن‌های ورودی پنل روی دسکتاپ محسوس نبودند، اما روی موبایلِ متوسط،
+   استک شدن delay+duration آن‌ها با رندر RSC، «سنگینی» کلیک بعدی را دوچندان
+   می‌کرد. اینجا فقط زمان‌های ورود/تاخیر کوتاه شده‌اند؛ هوور و حس زنده بودن
+   دست‌نخورده می‌ماند. */
+.admin-rise { animation-duration: .28s; }
+.admin-rise-1 { animation-delay: 0s; }
+.admin-rise-2 { animation-delay: .04s; }
+.admin-rise-3 { animation-delay: .08s; }
+.admin-rise-4 { animation-delay: .12s; }
+@media (max-width: 767px) {
+  /* لمس = بدون hover-intent؛ transition خود nav-item هم کوتاه‌تر تا فیدبک
+     لمس آنی باشد و تایمر CSS ماننده ردینگ لمسی (300ms legacy) نشود */
+  .admin-nav-item { transition-duration: .1s; touch-action: manipulation; }
+  .admin-rise, .admin-rise-1, .admin-rise-2, .admin-rise-3, .admin-rise-4 { animation: none; }
+}
+
 /* ── حالت روشن پنل (تم مشترک با سایت — کوکی ORBIT_THEME + applyTheme) ────
    قبلاً پنل فقط dark بود؛ سوییچ تم در تنظیمات، ظاهر پنل را عوض نمی‌کرد.
    این لایه با selector روی [data-theme='light'] همان کلاس‌های موجود را

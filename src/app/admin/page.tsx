@@ -95,10 +95,13 @@ export default async function AdminHome() {
         </AdminCard>
       </div>
 
-      {/* میان‌برها — طراح واقعی هیچ داشبوردی را بدون دسترسی سریع رها نمی‌کند */}
+      {/* میان‌برها — طراح واقعی هیچ داشبوردی را بدون دسترسی سریع رها نمی‌کند.
+          PERF: prefetch={true} پayload RSC هر سه مسیر پرکاربرد را بی‌درنگ پس از
+          رندر داشبورد آماده می‌کند؛ اولین کلیک کاربر تقریباً آنی سوییچ می‌کند
+          (قبلاً همان کلیک = رندر کامل سمت سرور با گارد + کوئری‌ها). */}
       <nav aria-label={t('title')} className="admin-rise admin-rise-4 grid gap-3 sm:grid-cols-3">
         {QUICK.map((q) => (
-          <Link key={q.href} href={q.href}
+          <Link key={q.href} href={q.href} prefetch
             className="admin-card group flex items-center justify-between gap-2 px-4 py-3 text-sm text-slate-200">
             <span>{tp(q.key)}</span>
             <span aria-hidden className="text-cyan-300 opacity-0 transition-opacity group-hover:opacity-100">→</span>

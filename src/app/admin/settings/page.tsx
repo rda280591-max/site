@@ -9,9 +9,11 @@ export const dynamic = 'force-dynamic';
 /** راهنمای عملیاتی پنل + نحوه اعطای نقش (بدون ریسک: تغییر نقش فقط از SQL Editor). */
 export default async function AdminSettingsPage() {
   // FIX (باگ «عنوان انگلیسی، بقیه فارسی»): ترجمه با locale صریح — helper مشترک پنل.
-  const { email } = await requireAdmin();
-  // FIX (دوزبانه‌سازی): همه متن‌ها از admin.messages؛ قبلاً نصف صفحه فارسی ثابت بود.
-  const t = await adminPageTranslations('admin.settings');
+  // PERF — گارد نشست و ترجمه موازی؛ قبلاً سریال بود و هر سوییچ تب چند صد ms اضافه می‌کرد.
+  const [{ email }, t] = await Promise.all([
+    requireAdmin(),
+    adminPageTranslations('admin.settings'), // FIX (دوزبانه‌سازی): همه متن‌ها از admin.messages
+  ]);
   return (
     <div className="max-w-2xl space-y-6">
       <AdminPageHeader eyebrow={t('title')} title={t('title')} />

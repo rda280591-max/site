@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireAdmin, type AdminContext } from './adminGuard';
+import { requireAdmin, invalidateAdminSessionCache, type AdminContext } from './adminGuard';
 import { upsertArticle, deleteArticle, setUserStatus } from './adminQueries';
 import { createRateLimiter, ipKey } from '@/core/rateLimit';
 import { safeHttpUrl } from '@/services/news/articleNormalizer';
@@ -19,6 +19,11 @@ const MAX_BODY = 100_000;
 async function requireWritable(): Promise<AdminContext> {
   const ctx = await requireAdmin();
   if (!ctx.supabase) throw new Error('forbidden');
+  // PERF/SEC — هر نوشتن ادمین، کش اعتبارسنجی نشست را بی‌اعتبار می‌کند؛ اگر
+  // اکشنی نقش/وضعیت کاربر را عوض کرده باشد (banUserAction)، فریم بعدی حتماً
+  // از سرور بازبررسی می‌شود و پنجره TTL به «چند ثانیه روی همان instance» محدود
+  // می‌ماند نه بیشتر.
+  invalidateAdminSessionCache(ctx.userId);
   return ctx;
 }
 

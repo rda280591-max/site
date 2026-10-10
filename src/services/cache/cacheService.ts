@@ -52,6 +52,23 @@ class CacheService {
     return this.get(key) !== undefined;
   }
 
+  /**
+   * FIX — «داده‌ای موجود نیست» در ایجنتیک براوزینگ (موبایل/JS-off): وقتی همه
+   * منابع زنده ناموفقند، سرو نسخه stale (منقضی‌شده ولی با TTL محدود) بهتر از
+   * خطا یا داده Mock است. فقط entryهای منقضی‌شده را می‌خواند و آن‌ها را حذف
+   * نمی‌کند؛ برای جلوگیری از داده خیلی کهنه، پنجره staleness اعمال می‌شود.
+   */
+  getStale<T>(key: string, maxStaleMs: number = 15 * 60_000): T | undefined {
+    const entry = this.store.get(key);
+    if (!entry) return undefined;
+    const agePastExpiry = Date.now() - entry.expiresAt;
+    if (agePastExpiry > maxStaleMs) {
+      this.store.delete(key);
+      return undefined;
+    }
+    return entry.value as T;
+  }
+
   invalidate(key: string): void {
     this.store.delete(key);
     eventBus.emit('cache:invalidated', { key });

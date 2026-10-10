@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
+import { invalidateAdminSessionCache } from '@/services/admin/adminGuard';
 
 /**
  * POST /api/auth/logout — پایان نشست سمت سرور.
@@ -16,6 +17,12 @@ export async function POST(): Promise<NextResponse> {
 
   const store = await cookies();
   const response = NextResponse.json({ ok: true });
+
+  // PERF/SEC — با لاگ‌اوت، کش اعتبارسنجی نشست ادمین (adminGuard) باید فوراً
+  // بسوزد؛ در غیر این صورت تا TTL کوتاهش ممکن است فریم بعدی /admin را با
+  // دسترسی قدیمی سرو کند. clear کامل چون اینجا userId در دسترس نیست و عملیات
+  // نادر است.
+  invalidateAdminSessionCache();
 
   if (!url || !anonKey) {
     // env نیست → حداقل کوکی‌ها را خودمان پاک کن تا کاربر از قفل بیرون بیاید.
