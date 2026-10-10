@@ -14,6 +14,7 @@ import { Vazirmatn } from 'next/font/google';
 import "../globals.css"; // FIX — استایل پنل ادمین (بیرون از [locale])
 import "./admin.css"; // لایه ظاهری اختصاصی پنل (بدون اثر روی باندل سایت عمومی)
 import AdminSidebar from '@/ui/components/admin/AdminSidebar';
+import AdminMobileNav from '@/ui/components/admin/AdminMobileNav';
 
 const vazirmatn = Vazirmatn({
   subsets: ['arabic', 'latin'],
@@ -79,9 +80,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
       <div lang={locale} dir={dir} data-theme={theme} className={`admin-shell min-h-screen text-slate-100 ${vazirmatn.variable}`}>
         <div className="flex min-h-screen">
           <AdminSidebar email={email} locale={locale} />
+          {/* FIX (UX موبایل): زیر md سایدبار مخفی است؛ نوار پایین + منوی کشویی
+              جای آن را می‌گیرند تا تب‌ها، سوییچ زبان و خروج در دسترس بمانند. */}
+          <AdminMobileNav email={email} locale={locale} />
           {/* max-width + m-auto: محتوا روی مانیتور عریض به‌جای کشیدگی بی‌هدف،
               ستون خوانا با همان ریتم سایدبار می‌گیرد — عادت واقعی طراحها. */}
-          <main id="admin-main" className="min-w-0 flex-1 p-5 sm:p-7 lg:p-9">
+          <main id="admin-main" className="admin-main-scroll min-w-0 flex-1 p-5 pb-24 sm:p-7 sm:pb-9 lg:p-9">
             <div className="mx-auto w-full max-w-6xl">{children}</div>
           </main>
         </div>

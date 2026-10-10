@@ -181,5 +181,7 @@
     "failed": "Upload failed.",
     "unsupported": "Unsupported file type.",
     "tooLarge": "File larger than 2MB."
-  }
+  },
+  "more": "More",
+  "closeMenu": "Close menu"
 }

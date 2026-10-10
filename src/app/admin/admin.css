@@ -289,3 +289,41 @@
 .admin-shell[data-theme='light'] .text-slate-300 { color: #1f2937; }
 .admin-shell[data-theme='light'] .text-slate-400 { color: #475569; }
 .admin-shell[data-theme='light'] .text-slate-500 { color: #64748b; }
+
+/* ── موبایل: نوار پایین + منوی کشویی (AdminMobileNav) ─────────────────── */
+.admin-mbar {
+  /* هایلایت آیتم فعال: نقطه نورانی بالای آیکون */
+}
+.admin-mbar-item {
+  position: relative;
+  border-radius: 0.7rem;
+  transition: color .15s ease, background-color .15s ease;
+  touch-action: manipulation; /* حذف تأخیر ۳۰۰ms لمسی در iOS/اندروید قدیمی */
+  -webkit-tap-highlight-color: transparent;
+}
+.admin-mbar-item[data-active='true'] { color: #67e8f9; }
+.admin-mbar-item[data-active='true']::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 18px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #22d3ee, #e879f9);
+  box-shadow: 0 0 8px rgba(34, 211, 238, 0.7);
+}
+.admin-mbar-item:active { background: rgba(255, 255, 255, 0.06); }
+
+/* ورود سریع شیت از پایین — زیر ۲۵۰ms تا سوییچ «آنی» به نظر برسد */
+@keyframes admin-sheet-in {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.admin-sheet { animation: admin-sheet-in .22s cubic-bezier(.22,.61,.36,1) both; }
+
+/* حالت روشن: نوار پایین و شیت سفید با لبه‌ی ملایم */
+.admin-shell[data-theme='light'] .admin-mbar { background: rgba(248, 250, 254, 0.95); border-top-color: rgba(15,23,42,.08); }
+.admin-shell[data-theme='light'] .admin-mbar-item { color: #475569; }
+.admin-shell[data-theme='light'] .admin-mbar-item[data-active='true'] { color: #0e7490; }
